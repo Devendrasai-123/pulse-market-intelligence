@@ -1,0 +1,15 @@
+---
+description: FastAPI, Supabase, and env conventions for the Pulse backend.
+globs: backend/**
+alwaysApply: false
+---
+
+# Backend conventions
+
+- FastAPI app lives in `backend/main.py`. Run with `uvicorn main:app --reload` from `backend/`.
+- Load config with `python-dotenv`. Never hardcode `SUPABASE_URL`, `SUPABASE_KEY`, `BRIGHT_DATA_API_KEY`, or `NVIDIA_NIM_API_KEY`.
+- When adding an env var, update `backend/.env.example` in the same change with a placeholder and a one-line comment.
+- Keep routes in `routes/`, Pydantic/DB shapes in `models/`, Bright Data / Supabase / CrewAI calls in `services/`.
+- Public scrape ingest only. Reject any design that needs authenticated third-party data.
+- Self-heal demo endpoints must expose clear states (`failed` → `healing` → `repaired`), not opaque internals.
+- Comment non-obvious logic. Prefer small, named functions over clever one-liners.

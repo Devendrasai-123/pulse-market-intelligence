@@ -1,0 +1,15 @@
+---
+description: Bright Data Scraper Studio, CLI, and self-heal conventions for Pulse.
+globs: scraper/**
+alwaysApply: false
+---
+
+# Scraper conventions
+
+- Targets must be publicly available pages only. Never suggest login, paywall, or cookie-gated sources.
+- Prefer Bright Data Scraper Studio AI Agent mode (`brightdata scraper create`) over hand-written selectors.
+- Collector IDs (`c_*`) are stable across runs and self-heal. Do not recreate a scraper to "fix" it — use `brightdata scraper heal` then `brightdata scraper approve`.
+- Keep extraction field names aligned with the DB schema: `asset_name`, `symbol`, `price`, `percent_change_24h`, `volume_24h` (prices); `headline`, `source`, `published_at`, `url` (news).
+- Never put API keys in scraper scripts. Use `brightdata login` or `BRIGHTDATA_API_KEY` in the local environment (CLI name differs from backend `BRIGHT_DATA_API_KEY`).
+- Document every scrape/heal/run command in `scraper/README.md` so the demo is reproducible.
+- Save sample JSON under `sample-output/` without secrets or personal data.

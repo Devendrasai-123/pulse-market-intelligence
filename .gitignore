@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Pulse — Node / frontend (Vite)
+node_modules/
+.vite/
+
+# Pulse — env templates (keep .env.example tracked)
+.env.local
+.env.*.local
+!.env.example
+
+# Pulse — Bright Data local run artifacts
+scraper/**/create.json

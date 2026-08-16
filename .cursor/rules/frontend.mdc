@@ -1,0 +1,14 @@
+---
+description: React 18, Vite, and trading-terminal UI conventions for Pulse.
+globs: frontend/**
+alwaysApply: false
+---
+
+# Frontend conventions
+
+- React 18 + Vite. Charts use Recharts.
+- Dark theme, clean and uncluttered. One accent color for interactive elements.
+- Dashboard must include: watchlist cards (price, green/red % change, sparkline), main price chart with range toggles and volume bars, AI insight card, news feed, gainers/losers, and a floating **Trigger Self-Heal Demo** button with live states: failed → healing → repaired.
+- No API keys in frontend source. Call the FastAPI backend; never embed Bright Data, Supabase service, or NIM keys in the client.
+- Keep components in `src/components/` and pages in `src/pages/` once Vite is scaffolded.
+- Prefer readable layout over dense Bloomberg-clone chrome. Judging includes clean code and a clear self-heal demo.

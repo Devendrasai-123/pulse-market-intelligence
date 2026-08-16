@@ -1,0 +1,33 @@
+---
+description: Always-loaded Pulse project summary, hackathon rules, and architecture.
+alwaysApply: true
+---
+
+# Pulse — project context
+
+Pulse is a self-healing market intelligence terminal for the Into the Scrape-Verse hackathon (WeMakeDevs + Bright Data).
+
+## What it does
+
+Scrapes public crypto prices and financial news via Bright Data Scraper Studio. When a target page layout breaks extraction, Bright Data self-heal repairs the scraper without manual selector edits. CrewAI + NVIDIA NIM turns fresh rows into a plain-language insight. A dark trading-terminal dashboard displays prices, charts, news, and a visible self-heal demo.
+
+## Stack
+
+- Scraper: Bright Data Scraper Studio + Bright Data CLI
+- Backend: Python, FastAPI, Uvicorn
+- Database: Supabase (Postgres)
+- AI: CrewAI + NVIDIA NIM
+- Frontend: React 18 + Vite + Recharts
+- Host: Vercel (frontend), Render (backend)
+
+## Hackathon rules (never violate)
+
+1. Public pages only — no logins, no paywalls, no authenticated/private sources.
+2. Never hardcode secrets. Use `.env`. Keep `.env.example` in sync with placeholders.
+3. Clean, commented, organized code (Best Clean Code track).
+4. Self-healing must stay explainable — not a black box.
+
+## Data schema
+
+- Prices: `asset_name`, `symbol`, `price`, `percent_change_24h`, `volume_24h`, `timestamp`
+- News: `headline`, `source`, `published_at`, `url`, `timestamp`

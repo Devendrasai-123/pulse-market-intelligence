@@ -228,3 +228,4 @@ node_modules/
 
 # Pulse — Bright Data local run artifacts
 scraper/**/create.json
+scraper/**/last_heal.json

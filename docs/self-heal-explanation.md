@@ -7,6 +7,32 @@ Docs: [Build with the Bright Data CLI](https://docs.brightdata.com/datasets/scra
 
 ---
 
+## Honesty audit (what is real vs not)
+
+| Piece | Real? | Notes |
+|-------|-------|--------|
+| **Failure detection** | **Yes (after fix)** | `POST /api/self-heal/detect` runs live `brightdata scraper run` and inspects JSON. Old `mark-failed` that only set a flag was **staged** and has been replaced. |
+| **Heal trigger** | **Yes** | `POST /api/trigger-self-heal` shells out to `brightdata scraper heal c_mswww62b2iig1j1hcj ...` |
+| **Status while healing** | **Partial** | We store `healing` in memory while the CLI subprocess runs. We do **not** separately poll a Bright Data progress API mid-flight; the CLI polls Bright Data internally. |
+| **Repaired** | **Yes (strict)** | Set only when the CLI JSON envelope has `status: "done"`. We no longer treat bare exit code 0 as success. |
+| **Timers / fake progress** | **None** | No `sleep`-based fake transitions. |
+
+### Demo recording note (local backend)
+
+For the hackathon **demo video**, we trigger self-heal against the **local** FastAPI
+backend (`http://127.0.0.1:8000`), not the free Render deploy.
+
+**Why:** Render’s free Python image typically does not include Node.js or the
+Bright Data CLI (`brightdata`). Pulse’s heal endpoint shells out to that CLI for a
+*real* Scraper Studio self-heal on collector `c_mswww62b2iig1j1hcj`. Running heal
+locally is the honest, reliable path for the recording.
+
+If a live detect returns **`healthy`**, do **not** claim the site was broken on camera —
+either heal anyway as a “repair exercise” with that disclosed, or wait until output
+truly fails detection.
+
+---
+
 ## What stays stable
 
 | Concept | Meaning |
@@ -71,19 +97,19 @@ Confirm previously broken fields are populated again. Same `c_*` id throughout.
 
 ## How Pulse demonstrates this (not a black box)
 
-| Demo state | What it maps to |
-|------------|-----------------|
-| **failed** | A run returned empty/null fields (or we simulate that failure for the live demo) |
-| **healing** | `scraper heal` is running / awaiting approval |
-| **repaired** | `scraper approve` succeeded and a re-run returns valid rows |
+| Demo state | API `status` | What it maps to |
+|------------|--------------|-----------------|
+| **failed** | `failed` | Live scrape inspected and looks empty/broken |
+| **healthy** | `healthy` | Live scrape looks valid — do not claim breakage |
+| **healing** | `healing` | Real `brightdata scraper heal` running (or awaiting_approval) |
+| **repaired** | `repaired` | Bright Data envelope `status=done` only |
 
-The floating **Trigger Self-Heal Demo** button on the dashboard walks through these states so judges can see:
+Local demo endpoints:
 
-1. Failure is visible (missing data / failed status)  
-2. Repair uses Bright Data's real heal + approve path  
-3. The collector id never changes — only extraction logic does  
-
-We document the exact `collector_id` and commands in `scraper/README.md` so the demo is reproducible.
+1. `GET /api/self-heal/preflight` — CLI + auth  
+2. `POST /api/self-heal/detect` — **real** scrape + inspect (`/mark-failed` is an alias)  
+3. `POST /api/trigger-self-heal` — **real** heal (default `auto_approve=true`)  
+4. `GET /api/self-heal/status` — in-memory job updated when the CLI finishes  
 
 ---
 
@@ -95,11 +121,12 @@ We document the exact `collector_id` and commands in `scraper/README.md` so the 
 
 ---
 
-## Demo cheat sheet (live)
+## Demo cheat sheet (local video)
 
-1. Show a bad or empty scrape → UI **failed**  
-2. Run heal (or trigger from the app) → UI **healing**  
-3. Approve after preview looks good → UI **repaired**  
-4. Re-run → watchlist/chart refill with the same collector id  
+1. Preflight: `GET /api/self-heal/preflight` → `ok: true`  
+2. Detect: `POST /api/self-heal/detect` → expect **failed** (or disclose **healthy**)  
+3. Heal: `POST /api/trigger-self-heal?auto_approve=true` → **healing**  
+4. Poll: `GET /api/self-heal/status` until **repaired** with `repaired_from_bright_data_done: true`  
+5. Optional: `brightdata scraper run c_mswww62b2iig1j1hcj "https://www.coingecko.com/en" --pretty`
 
 Keep this file linked from the root README under "How Bright Data Scraper Studio Is Used."

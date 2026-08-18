@@ -27,7 +27,13 @@ Scrapes public crypto prices and financial news via Bright Data Scraper Studio. 
 3. Clean, commented, organized code (Best Clean Code track).
 4. Self-healing must stay explainable — not a black box.
 
-## Data schema
+## Data schema (as scraped)
 
-- Prices: `asset_name`, `symbol`, `price`, `percent_change_24h`, `volume_24h`, `timestamp`
-- News: `headline`, `source`, `published_at`, `url`, `timestamp`
+Bright Data currently returns **exchange-level** rows nested under each coin:
+
+- Coin: `product_page_url`, `input.url`, `markets[]`
+- Market: `exchange_name`, `ticker_symbol`, `current_price{value,currency,symbol}`, `price_change_24h` (string), `volume_24h{value,currency,symbol}`
+
+Supabase table `market_data` stores one flattened row per `markets[]` entry. See `backend/schema.sql`.
+
+News (later): `headline`, `source`, `published_at`, `url`, `timestamp`

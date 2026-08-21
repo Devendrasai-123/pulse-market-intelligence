@@ -1,39 +1,23 @@
 import { useEffect, useState } from 'react'
 import { fetchNews } from '../api/pulse'
 
-/**
- * Functional NewsFeed — GET /api/news (no styling).
- * Shows empty list until news rows are ingested into Supabase.
- */
 export default function NewsFeed() {
   const [items, setItems] = useState([])
-  const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     let cancelled = false
-
     async function load() {
-      setLoading(true)
-      setError(null)
       try {
-        const data = await fetchNews({ limit: 20 })
-        if (!cancelled) {
-          setItems(data.items || [])
-          setCount(data.count ?? 0)
-        }
+        const data = await fetchNews({ limit: 12 })
+        if (!cancelled) setItems(data.items || [])
       } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : String(err))
-          setItems([])
-          setCount(0)
-        }
+        if (!cancelled) setError(err instanceof Error ? err.message : String(err))
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
-
     load()
     return () => {
       cancelled = true
@@ -41,33 +25,23 @@ export default function NewsFeed() {
   }, [])
 
   return (
-    <section>
-      <h2>NewsFeed</h2>
-      <p>
-        Source: GET /api/news — count={count} loading={String(loading)}
-      </p>
-      {error && <p>Error: {error}</p>}
-      {!error && !loading && count === 0 && (
-        <p>
-          No news rows in Supabase yet. Endpoint is wired; ingest news scrape
-          when ready.
-        </p>
+    <section className="card">
+      <h2>News</h2>
+      {loading && <p className="muted">Loading…</p>}
+      {error && <p className="err">{error}</p>}
+      {!loading && !error && items.length === 0 && (
+        <p className="muted">No news rows in Supabase yet.</p>
       )}
-      <ul>
-        {items.map((item) => (
-          <li key={item.id || item.url || item.headline}>
-            {item.headline || '(no headline)'} | {item.source || '?'} |{' '}
-            {item.published_at || ''} |{' '}
-            {item.url ? (
-              <a href={item.url} target="_blank" rel="noreferrer">
-                {item.url}
-              </a>
-            ) : (
-              '(no url)'
-            )}
-          </li>
-        ))}
-      </ul>
+      {items.map((item) => (
+        <article className="news-item" key={item.id || item.url}>
+          <a href={item.url} target="_blank" rel="noreferrer">
+            {item.headline}
+          </a>
+          <div className="muted" style={{ fontSize: 12 }}>
+            {item.source} · {item.published_at}
+          </div>
+        </article>
+      ))}
     </section>
   )
 }

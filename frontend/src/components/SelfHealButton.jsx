@@ -1,24 +1,16 @@
 import { useRef, useState } from 'react'
-import {
-  selfHealDetect,
-  selfHealStatus,
-  triggerSelfHeal,
-} from '../api/pulse'
+import { toast } from 'sonner'
+import { selfHealDetect, selfHealStatus, triggerSelfHeal } from '../api/pulse'
 
 const POLL_MS = 5000
 
-/**
- * Unstyled self-heal control:
- * detect -> trigger-self-heal -> poll status (plain text).
- */
 export default function SelfHealButton() {
   const [status, setStatus] = useState('idle')
-  const [message, setMessage] = useState('Not started')
-  const [jobId, setJobId] = useState(null)
-  const [raw, setRaw] = useState(null)
+  const [message, setMessage] = useState('Trigger a real Bright Data heal')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const timerRef = useRef(null)
+  const toastId = useRef(null)
 
   function stopPolling() {
     if (timerRef.current) {
@@ -30,9 +22,26 @@ export default function SelfHealButton() {
   function applyJob(job) {
     setStatus(job.status || 'unknown')
     setMessage(job.message || '')
-    setJobId(job.job_id || null)
-    setRaw(job)
-    if (job.status === 'repaired' || job.status === 'error' || job.status === 'healthy') {
+    if (job.status === 'healing') {
+      toast.loading(job.message || 'Healing…', { id: toastId.current })
+    }
+    if (job.status === 'repaired') {
+      toast.success('Repaired — Bright Data status done', { id: toastId.current })
+      stopPolling()
+      setBusy(false)
+    }
+    if (job.status === 'healthy') {
+      toast.message('Detect: healthy — still running a real heal', {
+        id: toastId.current,
+      })
+    }
+    if (job.status === 'failed') {
+      toast.warning(job.message || 'Extraction looks failed', {
+        id: toastId.current,
+      })
+    }
+    if (job.status === 'error') {
+      toast.error(job.message || 'Heal error', { id: toastId.current })
       stopPolling()
       setBusy(false)
     }
@@ -42,10 +51,11 @@ export default function SelfHealButton() {
     stopPolling()
     timerRef.current = setInterval(async () => {
       try {
-        const job = await selfHealStatus(id)
-        applyJob(job)
+        applyJob(await selfHealStatus(id))
       } catch (err) {
-        setError(err instanceof Error ? err.message : String(err))
+        const msg = err instanceof Error ? err.message : String(err)
+        setError(msg)
+        toast.error(msg, { id: toastId.current })
         stopPolling()
         setBusy(false)
       }
@@ -57,23 +67,17 @@ export default function SelfHealButton() {
     setBusy(true)
     setError(null)
     setStatus('detecting')
-    setMessage('Running POST /api/self-heal/detect ...')
-
+    setMessage('Running live scraper detect…')
+    toastId.current = toast.loading('Detecting with a live scraper run…')
     try {
       const detected = await selfHealDetect()
       applyJob(detected)
-
       if (detected.status === 'error') {
         setBusy(false)
         return
       }
-
       setBusy(true)
-      setMessage(
-        detected.status === 'healthy'
-          ? 'Detect=healthy; still running real heal as exercise...'
-          : 'Detect=failed; running POST /api/trigger-self-heal ...',
-      )
+      toast.loading('Starting Bright Data heal…', { id: toastId.current })
       const started = await triggerSelfHeal({ autoApprove: true })
       applyJob(started)
       if (started.status === 'error') {
@@ -82,39 +86,27 @@ export default function SelfHealButton() {
       }
       startPolling(started.job_id)
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      const msg = err instanceof Error ? err.message : String(err)
+      setError(msg)
       setStatus('error')
+      toast.error(msg, { id: toastId.current })
       setBusy(false)
       stopPolling()
     }
   }
 
   return (
-    <section>
-      <h2>Self-Heal</h2>
-      <button type="button" onClick={onClick} disabled={busy}>
-        {busy ? 'Running…' : 'Trigger Self-Heal'}
-      </button>
-      <p>status: {status}</p>
-      <p>message: {message}</p>
-      <p>job_id: {jobId || '(none)'}</p>
-      {error && <p>Error: {error}</p>}
-      {raw && (
-        <pre style={{ whiteSpace: 'pre-wrap', fontSize: 12 }}>
-          {JSON.stringify(
-            {
-              status: raw.status,
-              bright_data_status: raw.bright_data_status,
-              detection_is_real_scrape: raw.detection_is_real_scrape,
-              heal_is_real_cli: raw.heal_is_real_cli,
-              repaired_from_bright_data_done: raw.repaired_from_bright_data_done,
-              collector_id: raw.collector_id,
-            },
-            null,
-            2,
-          )}
-        </pre>
+    <div className="heal-fab">
+      {status !== 'idle' && (
+        <div className="heal-chip">
+          <strong>{status}</strong>
+          <div className="muted">{message}</div>
+          {error && <div className="err">{error}</div>}
+        </div>
       )}
-    </section>
+      <button type="button" onClick={onClick} disabled={busy}>
+        {busy ? 'Healing…' : 'Trigger Self-Heal'}
+      </button>
+    </div>
   )
 }

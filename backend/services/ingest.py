@@ -105,6 +105,13 @@ def ingest_file(
         client.table("market_data").insert(chunk).execute()
         inserted += len(chunk)
 
+    from services.activity import log_activity
+
+    log_activity(
+        "scrape_run",
+        f"Price scrape ingested — {inserted} market_data rows",
+        collector_id="c_mswww62b2iig1j1hcj",
+    )
     return {
         "coins": len(coins),
         "rows_prepared": len(rows),
@@ -183,6 +190,13 @@ def ingest_news_file(
         client.table("news").insert(chunk).execute()
         inserted += len(chunk)
 
+    from services.activity import log_activity
+
+    log_activity(
+        "scrape_run",
+        f"News scrape ingested — {inserted} articles (skipped {len(raw_items) - len(rows)} errors)",
+        collector_id="c_msx6tyya20kx5jxsy1",
+    )
     return {
         "raw_items": len(raw_items),
         "rows_prepared": len(rows),

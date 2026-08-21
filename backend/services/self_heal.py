@@ -541,6 +541,25 @@ def _remember(job: SelfHealJob) -> None:
     with _lock:
         _jobs[job.job_id] = job
         _latest_job_id = job.job_id
+    try:
+        from services.activity import log_activity
+
+        status = job.status
+        if status == "healing":
+            etype = "heal_triggered"
+        elif status == "repaired":
+            etype = "repaired"
+        elif status in ("failed", "error"):
+            etype = "failed"
+        else:
+            etype = "scrape_run"
+        log_activity(
+            etype,
+            job.message or f"Self-heal {status}",
+            collector_id=job.collector_id,
+        )
+    except Exception:
+        pass
 
 
 def start_heal_background(

@@ -12,6 +12,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from routes.activity import router as activity_router
 from routes.insight import router as insight_router
 from routes.news import router as news_router
 from routes.prices import router as prices_router
@@ -38,6 +39,7 @@ app.include_router(prices_router)
 app.include_router(news_router)
 app.include_router(insight_router)
 app.include_router(self_heal_router)
+app.include_router(activity_router)
 
 
 @app.get("/health")

@@ -97,3 +97,23 @@ create policy "Allow public read news"
   on public.news
   for select
   using (true);
+
+-- Activity log for the Logs page (real scrape / heal events only).
+create table if not exists public.activity_events (
+  id uuid primary key default gen_random_uuid(),
+  event_type text not null,
+  description text not null,
+  collector_id text,
+  occurred_at timestamptz not null default now()
+);
+
+create index if not exists activity_events_occurred_at_idx
+  on public.activity_events (occurred_at desc);
+
+alter table public.activity_events enable row level security;
+
+drop policy if exists "Allow public read activity_events" on public.activity_events;
+create policy "Allow public read activity_events"
+  on public.activity_events
+  for select
+  using (true);

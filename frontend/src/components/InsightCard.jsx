@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchInsight } from '../api/pulse'
 
-/**
- * Functional InsightCard — GET /api/insight (no styling).
- */
 export default function InsightCard() {
   const [insight, setInsight] = useState('')
   const [meta, setMeta] = useState(null)
@@ -12,7 +9,6 @@ export default function InsightCard() {
 
   useEffect(() => {
     let cancelled = false
-
     async function load() {
       setLoading(true)
       setError(null)
@@ -25,14 +21,11 @@ export default function InsightCard() {
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : String(err))
-          setInsight('')
-          setMeta(null)
         }
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
-
     load()
     return () => {
       cancelled = true
@@ -40,21 +33,16 @@ export default function InsightCard() {
   }, [])
 
   return (
-    <section>
-      <h2>AI Insight</h2>
-      <p>Source: GET /api/insight — loading={String(loading)}</p>
-      {error && <p>Error: {error}</p>}
-      {!error && !loading && (
-        <>
-          <p>{insight || '(empty insight)'}</p>
-          {meta && (
-            <p>
-              model={meta.model} prices={meta.price_row_count} news=
-              {meta.news_row_count} tickers=
-              {(meta.tickers_considered || []).join(', ')}
-            </p>
-          )}
-        </>
+    <section className="card insight">
+      <h2>AI insight</h2>
+      {loading && <p className="muted">Asking NVIDIA NIM…</p>}
+      {error && <p className="err">{error}</p>}
+      {!loading && !error && <p>{insight || 'No insight yet.'}</p>}
+      {meta && !loading && (
+        <p className="muted" style={{ marginTop: 12, fontSize: 12 }}>
+          {meta.model} · {meta.price_row_count} prices · {meta.news_row_count}{' '}
+          headlines
+        </p>
       )}
     </section>
   )

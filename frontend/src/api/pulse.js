@@ -29,3 +29,7 @@ export async function selfHealStatus(jobId) {
   const q = jobId ? `?job_id=${encodeURIComponent(jobId)}` : ''
   return apiGet(`/api/self-heal/status${q}`)
 }
+
+export async function fetchActivity({ limit = 50 } = {}) {
+  return apiGet(`/api/activity?limit=${limit}`)
+}

@@ -78,6 +78,7 @@ def _to_response(job) -> SelfHealResponse:
 
 @router.get("/self-heal/preflight", response_model=PreflightResponse)
 def self_heal_preflight() -> PreflightResponse:
+    """Report whether the Bright Data CLI and collector env are ready."""
     return PreflightResponse(**preflight())
 
 

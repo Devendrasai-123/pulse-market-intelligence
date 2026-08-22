@@ -14,6 +14,7 @@ in-memory job updated by that subprocess (the CLI itself polls Bright Data).
 from __future__ import annotations
 
 import json
+import logging
 import os
 import shutil
 import subprocess
@@ -27,12 +28,14 @@ from typing import Any, Literal
 
 from dotenv import load_dotenv
 
+from config import PRICE_COLLECTOR_ID, PRICE_SCRAPER_URL
+
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 DemoStatus = Literal["failed", "healthy", "healing", "repaired", "error"]
 
-DEFAULT_COLLECTOR_ID = "c_mswww62b2iig1j1hcj"
-DEFAULT_TARGET_URL = "https://www.coingecko.com/en"
 DEFAULT_HEAL_PROMPT = (
     "Markets table fields drifted. Re-extract exchange_name, ticker_symbol, "
     "current_price with value currency and symbol, price_change_24h, and "
@@ -71,17 +74,18 @@ _latest_job_id: str | None = None
 
 
 def get_collector_id() -> str:
-    return os.getenv("PRICE_COLLECTOR_ID", DEFAULT_COLLECTOR_ID).strip() or DEFAULT_COLLECTOR_ID
+    """Studio collector healed in place — same c_* before and after repair."""
+    return PRICE_COLLECTOR_ID
 
 
 def get_target_url() -> str:
-    return os.getenv("PRICE_SCRAPER_URL", DEFAULT_TARGET_URL).strip() or DEFAULT_TARGET_URL
+    """Public CoinGecko URL passed to `brightdata scraper run` / `heal`."""
+    return PRICE_SCRAPER_URL
 
 
 def _api_key() -> str | None:
     key = (
-        os.getenv("BRIGHT_DATA_API_KEY", "").strip()
-        or os.getenv("BRIGHTDATA_API_KEY", "").strip()
+        os.getenv("BRIGHT_DATA_API_KEY", "").strip() or os.getenv("BRIGHTDATA_API_KEY", "").strip()
     )
     if not key or key.startswith("your_"):
         return None
@@ -93,8 +97,7 @@ def _resolve_brightdata_bin() -> str:
     if found:
         return found
     raise FileNotFoundError(
-        "Bright Data CLI not found on PATH. Install with: "
-        "npm install -g @brightdata/cli"
+        "Bright Data CLI not found on PATH. Install with: " "npm install -g @brightdata/cli"
     )
 
 
@@ -108,6 +111,7 @@ def _cli_env() -> dict[str, str]:
 
 
 def preflight() -> dict[str, Any]:
+    """Check CLI on PATH and optional API key before detect/heal."""
     issues: list[str] = []
     cli_path: str | None = None
     try:
@@ -404,6 +408,7 @@ def build_heal_command(
     auto_approve: bool,
     timeout_sec: int,
 ) -> list[str]:
+    """Assemble the CLI argv. The API key is appended as -k and redacted in logs."""
     cmd = [
         _resolve_brightdata_bin(),
         "scraper",
@@ -518,9 +523,7 @@ def run_heal_sync(
         )
     elif bright_status in {"failed", "ai_trigger_failed", "poll_failed", "rejected", "error"}:
         job.status = "error"
-        job.message = str(
-            envelope.get("error") or f"Bright Data heal status={bright_status}"
-        )
+        job.message = str(envelope.get("error") or f"Bright Data heal status={bright_status}")
         job.error = job.message
     else:
         # Do NOT treat bare exit 0 as repaired — that was a dishonest fallback.
@@ -558,8 +561,8 @@ def _remember(job: SelfHealJob) -> None:
             job.message or f"Self-heal {status}",
             collector_id=job.collector_id,
         )
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Could not record heal activity: %s", exc)
 
 
 def start_heal_background(
@@ -567,6 +570,12 @@ def start_heal_background(
     auto_approve: bool = True,
     prompt: str | None = None,
 ) -> SelfHealJob:
+    """
+    Start `brightdata scraper heal` on a daemon thread.
+
+    Returns immediately with status=healing. Poll GET /api/self-heal/status
+    until the CLI envelope is parsed (repaired only when status is done).
+    """
     check = preflight()
     if not check["ok"]:
         job = SelfHealJob(
@@ -616,6 +625,7 @@ def start_heal_background(
 
 
 def get_job(job_id: str | None = None) -> SelfHealJob | None:
+    """Return a heal job by id, or the most recent job if id is omitted."""
     with _lock:
         if job_id:
             return _jobs.get(job_id)
@@ -625,6 +635,7 @@ def get_job(job_id: str | None = None) -> SelfHealJob | None:
 
 
 def write_last_heal_artifact(job: SelfHealJob) -> Path | None:
+    """Write scraper/price-scraper/last_heal.json for demo evidence (no secrets)."""
     try:
         out_dir = Path(__file__).resolve().parents[2] / "scraper" / "price-scraper"
         out_dir.mkdir(parents=True, exist_ok=True)

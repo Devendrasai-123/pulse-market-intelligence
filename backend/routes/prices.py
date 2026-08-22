@@ -11,12 +11,8 @@ router = APIRouter(prefix="/api", tags=["prices"])
 @router.get("/prices", response_model=PricesResponse)
 def list_prices(
     limit: int = Query(100, ge=1, le=1000, description="Max rows to return"),
-    ticker: str | None = Query(
-        None, description="Filter by exact ticker_symbol, e.g. DOGE/USDT"
-    ),
-    exchange: str | None = Query(
-        None, description="Filter by exact exchange_name, e.g. Binance"
-    ),
+    ticker: str | None = Query(None, description="Filter by exact ticker_symbol, e.g. DOGE/USDT"),
+    exchange: str | None = Query(None, description="Filter by exact exchange_name, e.g. Binance"),
 ) -> PricesResponse:
     """Return recent exchange-level market rows from Supabase."""
     try:
@@ -24,12 +20,7 @@ def list_prices(
     except ConfigError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
-    query = (
-        client.table("market_data")
-        .select("*")
-        .order("volume_24h", desc=True)
-        .limit(limit)
-    )
+    query = client.table("market_data").select("*").order("volume_24h", desc=True).limit(limit)
     if ticker:
         query = query.eq("ticker_symbol", ticker)
     if exchange:

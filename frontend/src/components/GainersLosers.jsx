@@ -4,7 +4,10 @@ export default function GainersLosers({ items }) {
   const assets = aggregateWatchlist(items, 40).filter((a) => a.change != null)
   const sorted = [...assets].sort((a, b) => b.change - a.change)
   const gainers = sorted.filter((a) => a.change >= 0).slice(0, 3)
-  const losers = sorted.filter((a) => a.change < 0).slice(-3).reverse()
+  const losers = sorted
+    .filter((a) => a.change < 0)
+    .slice(-3)
+    .reverse()
 
   return (
     <div className="gl">

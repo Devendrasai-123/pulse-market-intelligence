@@ -19,13 +19,11 @@ export default function Watchlist({ items }) {
                 <span className="exch">{row.exchange}</span>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div className="num">
-                  {formatPrice(row.price)}
-                </div>
-                <div className={`num ${row.change == null ? 'muted' : up ? 'up' : 'down'}`}>
-                  {row.change == null
-                    ? '—'
-                    : `${up ? '+' : ''}${row.change.toFixed(2)}%`}
+                <div className="num">{formatPrice(row.price)}</div>
+                <div
+                  className={`num ${row.change == null ? 'muted' : up ? 'up' : 'down'}`}
+                >
+                  {row.change == null ? '—' : `${up ? '+' : ''}${row.change.toFixed(2)}%`}
                 </div>
               </div>
               <div className="chgbar">

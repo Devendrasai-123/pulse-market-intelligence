@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from services.supabase_client import ConfigError, get_supabase
+
+logger = logging.getLogger(__name__)
 
 
 def fetch_recent_prices(limit: int = 80) -> list[dict[str, Any]]:
@@ -29,14 +32,11 @@ def fetch_recent_news(limit: int = 20) -> list[dict[str, Any]]:
     try:
         client = get_supabase()
         result = (
-            client.table("news")
-            .select("*")
-            .order("ingested_at", desc=True)
-            .limit(limit)
-            .execute()
+            client.table("news").select("*").order("ingested_at", desc=True).limit(limit).execute()
         )
         return list(result.data or [])
     except ConfigError:
         raise
-    except Exception:
+    except Exception as exc:
+        logger.warning("news table unread (%s) — returning empty list", exc)
         return []

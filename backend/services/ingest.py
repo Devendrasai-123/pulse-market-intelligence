@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from config import NEWS_COLLECTOR_ID, PRICE_COLLECTOR_ID
+from services.activity import log_activity
 from services.supabase_client import get_supabase
 
 # Matches "0.01%", "-1.2%", "+3%", or bare "-"
@@ -56,9 +58,7 @@ def flatten_scraped_coins(coins: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "price": price.get("value"),
                     "price_currency": price.get("currency"),
                     "price_symbol": price.get("symbol"),
-                    "price_change_24h_raw": (
-                        None if raw_change is None else str(raw_change)
-                    ),
+                    "price_change_24h_raw": (None if raw_change is None else str(raw_change)),
                     "price_change_24h": parse_percent_change(raw_change),
                     "volume_24h": volume.get("value"),
                     "volume_currency": volume.get("currency"),
@@ -71,6 +71,7 @@ def flatten_scraped_coins(coins: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def load_json_file(path: Path) -> list[dict[str, Any]]:
+    """Load a Bright Data price scrape array from disk."""
     with path.open(encoding="utf-8") as handle:
         data = json.load(handle)
     if not isinstance(data, list):
@@ -105,12 +106,10 @@ def ingest_file(
         client.table("market_data").insert(chunk).execute()
         inserted += len(chunk)
 
-    from services.activity import log_activity
-
     log_activity(
         "scrape_run",
         f"Price scrape ingested — {inserted} market_data rows",
-        collector_id="c_mswww62b2iig1j1hcj",
+        collector_id=PRICE_COLLECTOR_ID,
     )
     return {
         "coins": len(coins),
@@ -157,6 +156,7 @@ def flatten_scraped_news(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def load_news_json_file(path: Path) -> list[dict[str, Any]]:
+    """Load a Bright Data news scrape array from disk."""
     with path.open(encoding="utf-8") as handle:
         data = json.load(handle)
     if not isinstance(data, list):
@@ -190,12 +190,10 @@ def ingest_news_file(
         client.table("news").insert(chunk).execute()
         inserted += len(chunk)
 
-    from services.activity import log_activity
-
     log_activity(
         "scrape_run",
         f"News scrape ingested — {inserted} articles (skipped {len(raw_items) - len(rows)} errors)",
-        collector_id="c_msx6tyya20kx5jxsy1",
+        collector_id=NEWS_COLLECTOR_ID,
     )
     return {
         "raw_items": len(raw_items),

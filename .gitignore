@@ -229,3 +229,6 @@ node_modules/
 # Pulse — Bright Data local run artifacts
 scraper/**/create.json
 scraper/**/last_heal.json
+
+# Local Cursor skill copies — not part of the hackathon app
+.cursor/skills/

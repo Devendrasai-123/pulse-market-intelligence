@@ -66,9 +66,7 @@ def _summarize_prices(rows: list[dict[str, Any]], top_n: int = 12) -> str:
         vols = [float(i["volume_24h"]) for i in items if i.get("volume_24h") is not None]
         prices = [float(i["price"]) for i in items if i.get("price") is not None]
         changes = [
-            float(i["price_change_24h"])
-            for i in items
-            if i.get("price_change_24h") is not None
+            float(i["price_change_24h"]) for i in items if i.get("price_change_24h") is not None
         ]
         if not prices:
             continue
@@ -143,9 +141,7 @@ def generate_market_insight() -> dict[str, Any]:
     try:
         from crewai import Agent, Crew, LLM, Task
     except ImportError as exc:
-        raise InsightError(
-            'CrewAI is not installed. Run: pip install "crewai[litellm]"'
-        ) from exc
+        raise InsightError('CrewAI is not installed. Run: pip install "crewai[litellm]"') from exc
 
     model = os.getenv("NVIDIA_NIM_MODEL", _DEFAULT_MODEL).strip() or _DEFAULT_MODEL
     if not model.startswith("nvidia_nim/"):

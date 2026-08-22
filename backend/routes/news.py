@@ -18,6 +18,8 @@ def list_news(
         rows = fetch_recent_news(limit=limit)
     except ConfigError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"News query failed: {exc}") from exc
 
     items = [NewsItem.model_validate(row) for row in rows]
     return NewsResponse(count=len(items), items=items)

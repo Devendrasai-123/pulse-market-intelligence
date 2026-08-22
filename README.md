@@ -32,6 +32,21 @@ Public pages only. No logins, paywalls, or private data. Secrets stay in `.env` 
 
 ---
 
+## Repo layout
+
+```
+pulse/
+  backend/          FastAPI, ingest scripts, schema.sql
+  frontend/         React + Vite dashboard
+  scraper/          Studio CLI notes + collector folders
+  sample-output/    Example scrape JSON for judges
+  docs/             Self-heal audit + demo shot list
+```
+
+`.env` files stay local. Collector IDs in README are public Studio IDs, not API keys.
+
+---
+
 ## How Bright Data Scraper Studio Was Used
 
 We did **not** submit a Bright Data library-only scraper. Two **custom** collectors were created in Scraper Studio AI Agent mode and driven from the CLI (and from FastAPI for heal).
@@ -138,6 +153,7 @@ Heal can take several minutes.
 | `GET /api/prices` | Flattened CoinGecko listings from `market_data` |
 | `GET /api/news` | CoinDesk articles from `news` |
 | `GET /api/insight` | CrewAI + NVIDIA NIM insight from those rows |
+| `GET /api/activity` | Real scrape/heal events for the Logs page |
 | `GET /api/self-heal/preflight` | CLI / collector ready check |
 | `POST /api/self-heal/detect` | Real scrape-run failure detection |
 | `POST /api/trigger-self-heal` | Real Bright Data heal |
@@ -176,7 +192,14 @@ The video should show: live dashboard (prices, news, insight), how Scraper Studi
 
 ## Team
 
-Built for Into the Scrape-Verse, August 2026. _Add team name and members here._
+Built for Into the Scrape-Verse, August 2026.
+
+| Person | Role |
+|---|---|
+| Devendra | Backend |
+| Hardeep | UI/UX |
+| Poornesh | Team lead + AI infra |
+| Ashish | DBMS |
 
 ---
 

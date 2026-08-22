@@ -4,6 +4,10 @@ import { selfHealDetect, selfHealStatus, triggerSelfHeal } from '../api/pulse'
 
 const POLL_MS = 5000
 
+/**
+ * Floating control: live detect, then real Bright Data heal, then poll until done.
+ * Repaired is shown only when the API says Bright Data status is done.
+ */
 export default function SelfHealButton() {
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('Trigger a real Bright Data heal')

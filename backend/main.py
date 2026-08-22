@@ -7,6 +7,7 @@ Render / production (see Procfile):
     uvicorn main:app --host 0.0.0.0 --port $PORT
 """
 
+import logging
 import os
 
 from fastapi import FastAPI
@@ -17,6 +18,11 @@ from routes.insight import router as insight_router
 from routes.news import router as news_router
 from routes.prices import router as prices_router
 from routes.self_heal import router as self_heal_router
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
 
 app = FastAPI(title="Pulse", version="0.4.0")
 

@@ -21,9 +21,7 @@ if str(BACKEND_ROOT) not in sys.path:
 from services.ingest import ingest_news_file  # noqa: E402
 from services.supabase_client import ConfigError  # noqa: E402
 
-DEFAULT_SAMPLE = (
-    Path(__file__).resolve().parents[2] / "sample-output" / "example_news_data.json"
-)
+DEFAULT_SAMPLE = Path(__file__).resolve().parents[2] / "sample-output" / "example_news_data.json"
 
 
 def main() -> int:

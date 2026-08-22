@@ -28,9 +28,7 @@ export default function HeatStrip({ items }) {
               >
                 <b>{row.symbol}</b>
                 <span className={up ? 'up' : 'down'}>
-                  {row.change == null
-                    ? '—'
-                    : `${up ? '+' : ''}${row.change.toFixed(1)}%`}
+                  {row.change == null ? '—' : `${up ? '+' : ''}${row.change.toFixed(1)}%`}
                 </span>
               </div>
             )

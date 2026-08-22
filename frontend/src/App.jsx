@@ -1,9 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+
 import Layout from './components/Layout'
-import Dashboard from './pages/Dashboard'
-import Logs from './pages/Logs'
 import About from './pages/About'
 import Architecture from './pages/Architecture'
+import Dashboard from './pages/Dashboard'
+import Logs from './pages/Logs'
 import Team from './pages/Team'
 
 export default function App() {

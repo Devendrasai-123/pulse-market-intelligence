@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Activity } from 'lucide-react'
+
 import { fetchActivity } from '../api/pulse'
 
 const LABELS = {

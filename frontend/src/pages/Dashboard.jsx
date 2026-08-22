@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
-import Watchlist from '../components/Watchlist'
-import PriceChart from '../components/PriceChart'
-import NewsFeed from '../components/NewsFeed'
-import InsightCard from '../components/InsightCard'
-import SelfHealButton from '../components/SelfHealButton'
-import GainersLosers from '../components/GainersLosers'
-import VolumeShare from '../components/VolumeShare'
-import DeskRadar from '../components/DeskRadar'
-import HeatStrip from '../components/HeatStrip'
+
 import { fetchPrices } from '../api/pulse'
+import DeskRadar from '../components/DeskRadar'
+import GainersLosers from '../components/GainersLosers'
+import HeatStrip from '../components/HeatStrip'
+import InsightCard from '../components/InsightCard'
+import NewsFeed from '../components/NewsFeed'
+import PriceChart from '../components/PriceChart'
+import SelfHealButton from '../components/SelfHealButton'
+import VolumeShare from '../components/VolumeShare'
+import Watchlist from '../components/Watchlist'
 import { aggregateWatchlist, formatPrice } from '../lib/market'
 
 export default function Dashboard() {
@@ -38,7 +39,9 @@ export default function Dashboard() {
 
   const tape = aggregateWatchlist(items, 10)
   const withChange = tape.filter((r) => r.change != null)
-  const top = withChange.slice().sort((a, b) => Math.abs(b.change) - Math.abs(a.change))[0]
+  const top = withChange
+    .slice()
+    .sort((a, b) => Math.abs(b.change) - Math.abs(a.change))[0]
   const leader = tape[0]
 
   return (
@@ -46,8 +49,8 @@ export default function Dashboard() {
       <div className="kicker">Self-healing market intel</div>
       <h1 className="page-title">The desk is live.</h1>
       <p className="page-sub">
-        CoinGecko prices and CoinDesk headlines, scraped with Bright Data,
-        stored in Supabase
+        CoinGecko prices and CoinDesk headlines, scraped with Bright Data, stored in
+        Supabase
         {loading ? ' — syncing…' : '.'}
       </p>
       <div className="metrics">
@@ -62,7 +65,9 @@ export default function Dashboard() {
         <div className="metric">
           <label>Mover</label>
           <strong className={top && top.change >= 0 ? 'up' : 'down'}>
-            {top ? `${top.symbol} ${top.change >= 0 ? '+' : ''}${top.change.toFixed(2)}%` : '—'}
+            {top
+              ? `${top.symbol} ${top.change >= 0 ? '+' : ''}${top.change.toFixed(2)}%`
+              : '—'}
           </strong>
         </div>
         <div className="metric">

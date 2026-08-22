@@ -12,3 +12,4 @@ alwaysApply: false
 - No API keys in frontend source. Call the FastAPI backend; never embed Bright Data, Supabase service, or NIM keys in the client.
 - Keep components in `src/components/` and pages in `src/pages/` once Vite is scaffolded.
 - Prefer readable layout over dense Bloomberg-clone chrome. Judging includes clean code and a clear self-heal demo.
+- UI/UX work uses imported Emil Kowalski skills in `.cursor/skills/` (from https://github.com/emilkowalski/skills). Start with `emil-design-eng`, then `animate` and `pick-ui-library` as needed.

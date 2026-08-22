@@ -10,6 +10,7 @@ import {
   Sparkles,
   Wrench,
 } from 'lucide-react'
+
 import Reveal from '../components/Reveal'
 
 const STEPS = [
@@ -131,12 +132,14 @@ export default function About() {
     <main className="page about-page">
       <Reveal>
         <div className="kicker">Bright Data · Scraper Studio</div>
-        <h1 className="page-title">The page will change. The desk should not go quiet.</h1>
+        <h1 className="page-title">
+          The page will change. The desk should not go quiet.
+        </h1>
         <p className="page-sub about-lede">
-          Pulse is a market terminal on two public scrapes — CoinGecko prices and
-          CoinDesk headlines. We store them, NIM explains them, and when a layout
-          shift breaks extraction, Studio heals the same collector. You own the
-          scraper. The AI repairs it.
+          Pulse is a market terminal on two public scrapes — CoinGecko prices and CoinDesk
+          headlines. We store them, NIM explains them, and when a layout shift breaks
+          extraction, Studio heals the same collector. You own the scraper. The AI repairs
+          it.
         </p>
         <div className="hero-actions">
           <Link to="/" className="cta-btn">
@@ -166,8 +169,8 @@ export default function About() {
         <Reveal>
           <h2 className="sec-title">Built for a desk that has to stay on</h2>
           <p className="sec-sub">
-            Not a generic scrape API. One pipeline you can click: tape, news, brief,
-            and a heal you can watch.
+            Not a generic scrape API. One pipeline you can click: tape, news, brief, and a
+            heal you can watch.
           </p>
         </Reveal>
         <div className="usecases">
@@ -262,10 +265,10 @@ export default function About() {
         <Reveal>
           <h2 className="sec-title">Why this matters</h2>
           <p className="sec-sub why-copy">
-            Most scrape tutorials stop when the first JSON comes back. The real
-            failure is a week later, when the site ships a redesign and the pipeline
-            returns empty with no alarm. Pulse makes that repair visible: detect,
-            heal, and only then call it done.
+            Most scrape tutorials stop when the first JSON comes back. The real failure is
+            a week later, when the site ships a redesign and the pipeline returns empty
+            with no alarm. Pulse makes that repair visible: detect, heal, and only then
+            call it done.
           </p>
         </Reveal>
       </section>

@@ -33,9 +33,9 @@ export default function Architecture() {
       <div className="kicker">System</div>
       <h1 className="page-title">From a public URL to a desk that can heal.</h1>
       <p className="page-sub" style={{ fontSize: 16, maxWidth: 640 }}>
-        Bright Data fetches the page. FastAPI owns the contract. Supabase holds
-        the rows. React is only the glass. NIM reads the same glass. Heal never
-        forks a new collector.
+        Bright Data fetches the page. FastAPI owns the contract. Supabase holds the rows.
+        React is only the glass. NIM reads the same glass. Heal never forks a new
+        collector.
       </p>
 
       <div className="flow">
@@ -50,8 +50,8 @@ export default function Architecture() {
         <div className="card lift">React</div>
       </div>
       <p className="muted" style={{ marginTop: -12, marginBottom: 36 }}>
-        CrewAI + NVIDIA NIM branches off FastAPI into the insight card. Self-heal
-        is demonstrated on localhost (CLI + Node), not on free Render Python.
+        CrewAI + NVIDIA NIM branches off FastAPI into the insight card. Self-heal is
+        demonstrated on localhost (CLI + Node), not on free Render Python.
       </p>
 
       <h2 className="page-title" style={{ fontSize: 22 }}>
@@ -82,12 +82,15 @@ export default function Architecture() {
           What stays stable
         </h2>
         <p className="muted" style={{ maxWidth: 720 }}>
-          Collector IDs do not change when Studio heals. GET /api/prices and
-          GET /api/news keep the same JSON shape. That is the point of in-place
-          repair: the product does not get a new backend every time CoinGecko
-          ships a class rename.
+          Collector IDs do not change when Studio heals. GET /api/prices and GET /api/news
+          keep the same JSON shape. That is the point of in-place repair: the product does
+          not get a new backend every time CoinGecko ships a class rename.
         </p>
-        <Link to="/about" className="text-link" style={{ display: 'inline-block', marginTop: 12 }}>
+        <Link
+          to="/about"
+          className="text-link"
+          style={{ display: 'inline-block', marginTop: 12 }}
+        >
           Read how self-heal works →
         </Link>
       </section>

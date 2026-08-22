@@ -37,10 +37,7 @@ export default function DeskRadar({ items }) {
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={data} cx="50%" cy="50%" outerRadius="72%">
                 <PolarGrid stroke="rgba(255,255,255,0.12)" />
-                <PolarAngleAxis
-                  dataKey="axis"
-                  tick={{ fill: '#888', fontSize: 11 }}
-                />
+                <PolarAngleAxis dataKey="axis" tick={{ fill: '#888', fontSize: 11 }} />
                 <PolarRadiusAxis
                   angle={30}
                   domain={[0, 100]}

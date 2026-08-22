@@ -1,6 +1,10 @@
-/** Shared API base for Pulse backend. */
+/** Shared API base. Override with VITE_API_URL; never put secrets here. */
 export const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 
+/**
+ * @param {string} path FastAPI path starting with /
+ * @returns {Promise<any>}
+ */
 export async function apiGet(path) {
   const res = await fetch(`${API_BASE}${path}`)
   if (!res.ok) {
@@ -10,6 +14,10 @@ export async function apiGet(path) {
   return res.json()
 }
 
+/**
+ * @param {string} path FastAPI path starting with /
+ * @returns {Promise<any>}
+ */
 export async function apiPost(path) {
   const res = await fetch(`${API_BASE}${path}`, { method: 'POST' })
   if (!res.ok) {

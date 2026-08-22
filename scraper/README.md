@@ -17,7 +17,7 @@ Flattened into Supabase `market_data` — see `backend/schema.sql`.
 ### Create (AI Agent mode — 5–15+ minutes)
 
 ```powershell
-cd C:\webscraperhackthon\pulse
+cd pulse
 
 brightdata scraper create "https://www.coingecko.com/en" `
   "From the public CoinGecko homepage markets table, extract a list of cryptocurrencies. For each row extract: asset_name (full coin name), symbol (ticker), price (current USD price as a number), percent_change_24h (24-hour percent change as a number), volume_24h (24-hour trading volume as a number). Skip ads, sponsored rows, and UI chrome. Return a JSON array of objects using those exact field names." `
@@ -45,6 +45,8 @@ brightdata scraper run <collector_id> "https://www.coingecko.com/en" --pretty
 ```
 
 See [docs/self-heal-explanation.md](../docs/self-heal-explanation.md).
+
+`scraper/price-scraper/last_heal.json` is written by the API after a heal. It is gitignored (local path + job payload). Do not commit it.
 
 ## News scraper — CoinDesk
 

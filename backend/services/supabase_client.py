@@ -15,6 +15,7 @@ class ConfigError(RuntimeError):
 
 @lru_cache(maxsize=1)
 def get_supabase() -> Client:
+    """Return a cached Supabase client. Raises ConfigError if URL/key are missing."""
     url = os.getenv("SUPABASE_URL", "").strip()
     key = os.getenv("SUPABASE_KEY", "").strip()
     if not url or not key or "your_supabase" in url or "your_supabase" in key:

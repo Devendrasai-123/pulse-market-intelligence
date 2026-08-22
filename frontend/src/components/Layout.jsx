@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { Menu } from 'lucide-react'
-import { Drawer } from 'vaul'
 import { Toaster } from 'sonner'
-import { formatClock } from '../lib/market'
+import { Drawer } from 'vaul'
+
 import { API_BASE } from '../api/client'
+import { formatClock } from '../lib/market'
 
 const REPO = 'https://github.com/Devendrasai-123/pulse-market-intelligence'
 
@@ -72,12 +73,7 @@ export default function Layout() {
           ))}
         </nav>
         <div className="nav-end">
-          <a
-            className="github-btn"
-            href={REPO}
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="github-btn" href={REPO} target="_blank" rel="noreferrer">
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
               <path
                 fill="currentColor"
@@ -92,34 +88,34 @@ export default function Layout() {
             <span>{clock}</span>
           </div>
           <Drawer.Root open={open} onOpenChange={setOpen}>
-          <Drawer.Trigger asChild>
-            <button type="button" className="burger" aria-label="Menu">
-              <Menu size={18} />
-            </button>
-          </Drawer.Trigger>
-          <Drawer.Portal>
-            <Drawer.Overlay className="vaul-overlay" />
-            <Drawer.Content className="vaul-content">
-              <div className="vaul-handle" />
-              <Drawer.Title className="vaul-title">Pulse</Drawer.Title>
-              <nav className="vaul-nav">
-                {LINKS.map((l) => (
-                  <NavLink
-                    key={l.to}
-                    to={l.to}
-                    end={l.end}
-                    onClick={() => setOpen(false)}
-                  >
-                    {l.label}
-                  </NavLink>
-                ))}
-                <a href={REPO} target="_blank" rel="noreferrer">
-                  GitHub
-                </a>
-              </nav>
-            </Drawer.Content>
-          </Drawer.Portal>
-        </Drawer.Root>
+            <Drawer.Trigger asChild>
+              <button type="button" className="burger" aria-label="Menu">
+                <Menu size={18} />
+              </button>
+            </Drawer.Trigger>
+            <Drawer.Portal>
+              <Drawer.Overlay className="vaul-overlay" />
+              <Drawer.Content className="vaul-content">
+                <div className="vaul-handle" />
+                <Drawer.Title className="vaul-title">Pulse</Drawer.Title>
+                <nav className="vaul-nav">
+                  {LINKS.map((l) => (
+                    <NavLink
+                      key={l.to}
+                      to={l.to}
+                      end={l.end}
+                      onClick={() => setOpen(false)}
+                    >
+                      {l.label}
+                    </NavLink>
+                  ))}
+                  <a href={REPO} target="_blank" rel="noreferrer">
+                    GitHub
+                  </a>
+                </nav>
+              </Drawer.Content>
+            </Drawer.Portal>
+          </Drawer.Root>
         </div>
       </header>
       <Outlet />

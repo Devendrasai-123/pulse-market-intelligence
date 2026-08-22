@@ -40,8 +40,7 @@ export default function InsightCard() {
       {!loading && !error && <p>{insight || 'No insight yet.'}</p>}
       {meta && !loading && (
         <p className="muted" style={{ marginTop: 12, fontSize: 12 }}>
-          {meta.model} · {meta.price_row_count} prices · {meta.news_row_count}{' '}
-          headlines
+          {meta.model} · {meta.price_row_count} prices · {meta.news_row_count} headlines
         </p>
       )}
     </section>
